@@ -6,6 +6,41 @@ import { Socket, io } from "socket.io-client";
 // const URL = "https://webrtc-socket-video-call-server.vercel.app";
 const URL = "https://webrtc-socket-video-call-server.onrender.com";
 
+const iceServers = [
+  {
+    urls: "stun:stun.relay.metered.ca:80",
+  },
+  {
+    urls: "turn:global.relay.metered.ca:80",
+    username: "91400b6252c520f50142c091",
+    credential: "AWciVA1fJXac3+Fm",
+  },
+  {
+    urls: "turn:global.relay.metered.ca:80?transport=tcp",
+    username: "91400b6252c520f50142c091",
+    credential: "AWciVA1fJXac3+Fm",
+  },
+  {
+    urls: "turn:global.relay.metered.ca:443",
+    username: "91400b6252c520f50142c091",
+    credential: "AWciVA1fJXac3+Fm",
+  },
+  {
+    urls: "turns:global.relay.metered.ca:443?transport=tcp",
+    username: "91400b6252c520f50142c091",
+    credential: "AWciVA1fJXac3+Fm",
+  },
+  // {
+  //   urls: 'turn:your.turn.server:3478',
+  //   username: 'your-username',
+  //   credential: 'your-credential'
+  // }
+];
+
+const pcConfig = {
+  iceServers: iceServers,
+};
+
 export const Room = ({
   name,
   localAudioTrack,
@@ -42,7 +77,7 @@ export const Room = ({
     socket.on("send-offer", async ({ roomId }) => {
       // alert("Send offer please");
       setLobby(false);
-      const pc = new RTCPeerConnection();
+      const pc = new RTCPeerConnection(pcConfig);
       setSendingPc(pc);
       if (localVideoTrack) {
         pc.addTrack(localVideoTrack);
@@ -79,7 +114,7 @@ export const Room = ({
       // alert("Send answer please");
       setLobby(false);
 
-      const pc = new RTCPeerConnection();
+      const pc = new RTCPeerConnection(pcConfig);
       pc.setRemoteDescription(remoteSdp);
       const sdp = await pc.createAnswer();
       // @ts-ignore
